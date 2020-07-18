@@ -16,12 +16,15 @@ class CitiesListAdapter(context: Context) : BaseRecyclerAdapter<City>(context) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseRecyclerHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_city_info, parent, false)
+                .inflate(R.layout.item_city_info, parent, false)
         return BaseRecyclerHolder(view)
     }
 
     override fun onBindViewHolder(holder: BaseRecyclerHolder, position: Int) {
         super.onBindViewHolder(holder, position)
-        holder.itemView.tvCityName.text = items[position].name
+        holder.itemView.tvCityName.text = context.getString(R.string.text_city_and_country_code,
+                items[position].name, items[position].country)
+        holder.itemView.tvCoordinates.text = context.getString(R.string.text_coordinates,
+                items[position].coordinates.lat, items[position].coordinates.lon)
     }
 }

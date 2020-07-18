@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gmail.cities.R
 import com.gmail.cities.domain.common.ResultState
@@ -39,6 +40,8 @@ class CitiesListFragment : BaseFragment() {
         layoutManager = LinearLayoutManager(context)
         rvCitiesList.layoutManager = layoutManager
         rvCitiesList.adapter = citiesListAdapter
+        rvCitiesList.addItemDecoration(DividerItemDecoration(parentActivity, DividerItemDecoration.VERTICAL))
+
         citiesListAdapter.itemClicked {
 //            TODO
 //            parentActivity.supportFragmentManager.beginTransaction()
@@ -46,7 +49,6 @@ class CitiesListFragment : BaseFragment() {
 //                .addToBackStack(null)
 //                .commit()
         }
-        showLoading()
         viewModel.getAllCities(null)
     }
 

@@ -4,18 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/default_margin_x0_5">
+    android:paddingTop="@dimen/default_margin_x0_5"
+    android:paddingBottom="@dimen/default_margin_x0_5">
 
     <TextView
         android:id="@+id/tvCityName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin"
         android:textColor="@android:color/black"
+        android:textSize="@dimen/default_text_size_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="City name" />
+        tools:text="Ukraine, UA" />
+
+    <TextView
+        android:id="@+id/tvCoordinates"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/default_text_size_subtitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCityName"
+        tools:text="50.4501° N, 30.5234° E" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
