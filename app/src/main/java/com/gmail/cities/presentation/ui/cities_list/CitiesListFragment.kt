@@ -49,6 +49,7 @@ class CitiesListFragment : BaseFragment() {
 //                .addToBackStack(null)
 //                .commit()
         }
+        showLoading()
         viewModel.getAllCities(null)
     }
 

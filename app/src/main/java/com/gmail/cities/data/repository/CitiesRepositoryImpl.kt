@@ -1,8 +1,7 @@
 package com.gmail.cities.data.repository
 
 import android.content.Context
-import com.gmail.cities.data.common.applyIoScheduler
-import com.gmail.cities.data.common.mapDefaultErrors
+import com.gmail.cities.data.common.applyComputationScheduler
 import com.gmail.cities.data.entity.CityResponse
 import com.gmail.cities.domain.common.ResultState
 import com.gmail.cities.domain.entity.City
@@ -17,29 +16,31 @@ class CitiesRepositoryImpl(private val context: Context) : CitiesRepository {
         const val ASSETS_CITIES_PATH = "cities.json"
     }
 
+    lateinit var sortedCitiesList: List<City>
+
     override fun getAllCities(filter: String?): Observable<ResultState<List<City>>> {
-        return Observable.just(getCities())
-            .applyIoScheduler()
-            .map {
-                if (it.isNotEmpty()) {
-                    ResultState.Success(it.map { it.toCity() })
-                } else {
-                    ResultState.Loading(emptyList<City>())
-                }
+        return Observable.create<ResultState<List<City>>> { subscriber ->
+            sortedCitiesList = getCities().map { it.toCity() }
+                    .sortedWith(compareBy(City::name, City::country))
+
+            val result: ResultState<List<City>> = if (sortedCitiesList.isNotEmpty()) {
+                ResultState.Success(sortedCitiesList)
+            } else {
+                ResultState.Loading(emptyList())
             }
-            .mapDefaultErrors()
+            subscriber.onNext(result)
+        }
+                .applyComputationScheduler()
     }
 
     private fun getCities(): List<CityResponse> {
-        return Gson().fromJson<List<CityResponse>>(
-            readJSONFromAsset(),
-            object : TypeToken<List<CityResponse>>() {}.type
-        )
+        return Gson().fromJson<List<CityResponse>>(readJSONFromAsset(),
+                object : TypeToken<List<CityResponse>>() {}.type)
     }
 
     private fun readJSONFromAsset(): String? {
-        return context.assets.open(ASSETS_CITIES_PATH).bufferedReader().use {
-            it.readText()
-        }
+        return context.assets.open(ASSETS_CITIES_PATH)
+                .bufferedReader()
+                .use { it.readText() }
     }
 }
