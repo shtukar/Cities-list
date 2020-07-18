@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.gmail.cities.R
+import com.gmail.cities.presentation.extentions.hideKeyboard
 import dagger.android.support.DaggerFragment
 
 abstract class BaseFragment : DaggerFragment() {
@@ -56,5 +57,11 @@ abstract class BaseFragment : DaggerFragment() {
             hideLoading()
         }
         return false
+    }
+
+    fun hideKeyboard() {
+        val view = activity?.currentFocus
+        view?.hideKeyboard()
+        view?.clearFocus()
     }
 }

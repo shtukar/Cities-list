@@ -15,6 +15,7 @@ import com.gmail.cities.presentation.extentions.hide
 import com.gmail.cities.presentation.extentions.observe
 import com.gmail.cities.presentation.extentions.onTextChanged
 import com.gmail.cities.presentation.extentions.show
+import com.gmail.cities.presentation.ui.city_map_details.CityMapDetailsFragment
 import kotlinx.android.synthetic.main.fragment_cities_list.*
 import javax.inject.Inject
 
@@ -58,11 +59,11 @@ class CitiesListFragment : BaseFragment() {
         )
 
         citiesListAdapter.itemClicked {
-//            TODO
-//            parentActivity.supportFragmentManager.beginTransaction()
-//                .add(R.id.container, CityMapDetailsFragment.newInstance(it))
-//                .addToBackStack(null)
-//                .commit()
+            hideKeyboard()
+            parentActivity.supportFragmentManager.beginTransaction()
+                    .add(R.id.container, CityMapDetailsFragment.newInstance(it.coordinates))
+                    .addToBackStack(null)
+                    .commit()
         }
 
         etFilter.onTextChanged { viewModel.getAllCities(it) }
@@ -75,6 +76,7 @@ class CitiesListFragment : BaseFragment() {
                 rvCitiesList.show()
                 tvNoResult.hide()
                 citiesListAdapter.items = result.data.toMutableList()
+                rvCitiesList.smoothScrollToPosition(0)
             }
             is ResultState.Loading -> {
                 rvCitiesList.hide()
