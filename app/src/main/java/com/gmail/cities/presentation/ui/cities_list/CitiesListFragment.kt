@@ -1,5 +1,6 @@
 package com.gmail.cities.presentation.ui.cities_list
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -10,7 +11,10 @@ import com.gmail.cities.R
 import com.gmail.cities.domain.common.ResultState
 import com.gmail.cities.domain.entity.City
 import com.gmail.cities.presentation.common.BaseFragment
+import com.gmail.cities.presentation.extentions.hide
 import com.gmail.cities.presentation.extentions.observe
+import com.gmail.cities.presentation.extentions.onTextChanged
+import com.gmail.cities.presentation.extentions.show
 import kotlinx.android.synthetic.main.fragment_cities_list.*
 import javax.inject.Inject
 
@@ -35,12 +39,23 @@ class CitiesListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupView()
+        showLoading()
+        viewModel.getAllCities(null)
+    }
 
+    @SuppressLint("CheckResult")
+    private fun setupView() {
         citiesListAdapter = CitiesListAdapter(parentActivity)
         layoutManager = LinearLayoutManager(context)
         rvCitiesList.layoutManager = layoutManager
         rvCitiesList.adapter = citiesListAdapter
-        rvCitiesList.addItemDecoration(DividerItemDecoration(parentActivity, DividerItemDecoration.VERTICAL))
+        rvCitiesList.addItemDecoration(
+                DividerItemDecoration(
+                        parentActivity,
+                        DividerItemDecoration.VERTICAL
+                )
+        )
 
         citiesListAdapter.itemClicked {
 //            TODO
@@ -49,16 +64,23 @@ class CitiesListFragment : BaseFragment() {
 //                .addToBackStack(null)
 //                .commit()
         }
-        showLoading()
-        viewModel.getAllCities(null)
+
+        etFilter.onTextChanged { viewModel.getAllCities(it) }
     }
 
     private fun onCities(result: ResultState<List<City>>) {
         hideLoading()
-        if (result is ResultState.Success) {
-            citiesListAdapter.items = result.data.toMutableList()
-        } else if (result is ResultState.Error) {
-            showDefaultError()
+        when (result) {
+            is ResultState.Success -> {
+                rvCitiesList.show()
+                tvNoResult.hide()
+                citiesListAdapter.items = result.data.toMutableList()
+            }
+            is ResultState.Loading -> {
+                rvCitiesList.hide()
+                tvNoResult.show()
+            }
+            is ResultState.Error -> showDefaultError()
         }
     }
 }

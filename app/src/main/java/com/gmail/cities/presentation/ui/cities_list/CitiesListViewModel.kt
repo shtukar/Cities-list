@@ -22,6 +22,7 @@ class CitiesListViewModel @Inject constructor(private val citiesUseCase: CitiesU
      * Get the whole information about cities.
      */
     fun getAllCities(filter: String?) {
+        onCleared()
         citiesUseCase.getAllCities(filter).subscribe { resultState: ResultState<List<City>> ->
             allCitiesStatus.postValue(resultState)
         }.track()

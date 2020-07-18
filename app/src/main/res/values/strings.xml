@@ -3,5 +3,7 @@
     <string name="default_error">Something went wrong</string>
     <string name="text_city_and_country_code">%1s, %2s</string>
     <string name="text_coordinates">%1f° N, %2f° E</string>
+    <string name="text_search">Search</string>
+    <string name="text_no_result">No results were found.</string>
 
 </resources>
