@@ -19,18 +19,22 @@ class CitiesRepositoryImpl(private val context: Context) : CitiesRepository {
         const val EMPTY_STRING = ""
     }
 
-    private val sortedCitiesList by lazy {
-        getCitiesList().map { it.toCity() }.sortedWith(compareBy(City::name, City::country))
-    }
+    private var sortedCitiesList = listOf<City>()
     private var filterList = listOf<City>()
     private var previousFilterRequest: String = EMPTY_STRING
 
     override fun getAllCities(filter: String?): Observable<ResultState<List<City>>> {
         return Observable.create<ResultState<List<City>>> { subscriber ->
+            if (sortedCitiesList.isNullOrEmpty()) {
+                sortedCitiesList = getCitiesList().map { it.toCity() }
+                        .sortedWith(compareBy(City::name, City::country))
+            }
+
             filterList = if (filter.isNullOrEmpty()) {
                 sortedCitiesList.toMutableList()
             } else {
-                if (filter.startsWith(previousFilterRequest) && filter != previousFilterRequest) {
+                if (previousFilterRequest.isNotEmpty() && filter != previousFilterRequest
+                        && filter.startsWith(previousFilterRequest)) {
                     filterList.filter { it.name.startsWith(filter, ignoreCase = true) }
                 } else {
                     sortedCitiesList.filter { it.name.startsWith(filter, ignoreCase = true) }
