@@ -5,5 +5,5 @@ import com.gmail.cities.domain.entity.City
 import io.reactivex.Observable
 
 interface CitiesUseCase {
-    fun getAllCities(filter: String?): Observable<ResultState<List<City>>>
+    fun getAllCities(): Observable<ResultState<List<City>>>
 }

@@ -7,6 +7,5 @@ import io.reactivex.Observable
 
 class CitiesUseCaseImpl(private val repository: CitiesRepository) : CitiesUseCase {
 
-    override fun getAllCities(filter: String?): Observable<ResultState<List<City>>> =
-        repository.getAllCities(filter)
+    override fun getAllCities(): Observable<ResultState<List<City>>> = repository.getAllCities()
 }

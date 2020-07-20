@@ -16,46 +16,28 @@ class CitiesRepositoryImpl(private val context: Context) : CitiesRepository {
 
     companion object {
         const val ASSETS_CITIES_PATH = "cities.json"
-        const val EMPTY_STRING = ""
     }
 
-    private var sortedCitiesList = listOf<City>()
-    private var filterList = listOf<City>()
-    private var previousFilterRequest: String = EMPTY_STRING
-
-    override fun getAllCities(filter: String?): Observable<ResultState<List<City>>> {
+    override fun getAllCities(): Observable<ResultState<List<City>>> {
         return Observable.create<ResultState<List<City>>> { subscriber ->
-            if (sortedCitiesList.isNullOrEmpty()) {
-                sortedCitiesList = getCitiesList().map { it.toCity() }
-                        .sortedWith(compareBy(City::name, City::country))
-            }
+            val listFromJson = getCitiesList().map { it.toCity() }
+                    .sortedWith(compareBy(City::name, City::country))
 
-            filterList = if (filter.isNullOrEmpty()) {
-                sortedCitiesList.toMutableList()
-            } else {
-                if (previousFilterRequest.isNotEmpty() && filter != previousFilterRequest
-                        && filter.startsWith(previousFilterRequest)) {
-                    filterList.filter { it.name.startsWith(filter, ignoreCase = true) }
-                } else {
-                    sortedCitiesList.filter { it.name.startsWith(filter, ignoreCase = true) }
-                }
-            }
-
-            val result: ResultState<List<City>> = if (filterList.isNotEmpty()) {
-                previousFilterRequest = filter ?: EMPTY_STRING
-                ResultState.Success(filterList)
+            val result: ResultState<List<City>> = if (listFromJson.isNotEmpty()) {
+                ResultState.Success(listFromJson)
             } else {
                 ResultState.Loading(emptyList())
             }
             subscriber.onNext(result)
         }
-                .distinct()
                 .applyComputationScheduler()
                 .mapDefaultErrors()
     }
 
     private fun getCitiesList(): List<CityResponse> {
-        return Gson().fromJson<List<CityResponse>>(readJSONFromAsset(context, ASSETS_CITIES_PATH),
-                object : TypeToken<List<CityResponse>>() {}.type)
+        return Gson().fromJson<List<CityResponse>>(
+                readJSONFromAsset(context, ASSETS_CITIES_PATH),
+                object : TypeToken<List<CityResponse>>() {}.type
+        )
     }
 }
